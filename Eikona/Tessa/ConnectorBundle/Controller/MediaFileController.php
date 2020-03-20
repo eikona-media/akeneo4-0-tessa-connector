@@ -8,22 +8,56 @@
 
 namespace Eikona\Tessa\ConnectorBundle\Controller;
 
-use Akeneo\Pim\Enrichment\Bundle\Doctrine\ORM\Repository\ProductModelRepository;
-use Akeneo\Pim\Enrichment\Bundle\Doctrine\ORM\Repository\ProductRepository;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductInterface;
 use Akeneo\Pim\Enrichment\Component\Product\Model\ProductModelInterface;
+use Akeneo\Pim\Enrichment\Component\Product\Repository\ProductModelRepositoryInterface;
+use Akeneo\Pim\Enrichment\Component\Product\Repository\ProductRepositoryInterface;
 use Akeneo\UserManagement\Component\Model\User;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Eikona\Tessa\ConnectorBundle\Security\AuthGuard;
+use Eikona\Tessa\ConnectorBundle\Tessa;
+use Eikona\Tessa\ConnectorBundle\Utilities\IdPrefixer;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-class MediaFileController extends Controller
+class MediaFileController extends AbstractController
 {
     const SSO_ACTION_ASSET_DETAIL = 'detail';
     const SSO_ACTION_ASSET_SELECT = 'select';
     const SSO_ACTION_PRODUCT_GALLERY = 'gallery';
+
+    /** @var Tessa */
+    protected $tessa;
+    /** @var AuthGuard */
+    protected $authGuard;
+    /** @var ProductRepositoryInterface */
+    protected $productRepository;
+    /** @var ProductModelRepositoryInterface */
+    protected $productModelRepository;
+    /** @var IdPrefixer */
+    protected $idPrefixer;
+    /** @var TokenStorageInterface */
+    protected $tokenStorage;
+
+    public function __construct(
+        Tessa $tessa,
+        AuthGuard $authGuard,
+        ProductRepositoryInterface $productRepository,
+        ProductModelRepositoryInterface $productModelRepository,
+        IdPrefixer $idPrefixer,
+        TokenStorageInterface $tokenStorage
+    )
+    {
+        $this->tessa = $tessa;
+        $this->authGuard = $authGuard;
+        $this->productRepository = $productRepository;
+        $this->productModelRepository = $productModelRepository;
+        $this->idPrefixer = $idPrefixer;
+        $this->tokenStorage = $tokenStorage;
+    }
 
     /**
      * @param $assetId
@@ -31,9 +65,8 @@ class MediaFileController extends Controller
      */
     public function previewAction($assetId)
     {
-        $authGuard = $this->get('eikona.tessa.auth_guard');
-        $downloadToken = $authGuard->getDownloadAuthToken($assetId, 'bild');
-        $url = $this->get('eikona.tessa')->getBaseUrl()
+        $downloadToken = $this->authGuard->getDownloadAuthToken($assetId, 'bild');
+        $url = $this->tessa->getBaseUrl()
             . '/ui/bild.php'
             . '?asset_system_id=' . $assetId
             . '&type=preview'
@@ -76,10 +109,8 @@ class MediaFileController extends Controller
      */
     public function productGalleryAction(Request $request, $id)
     {
-        /** @var ProductRepository $productRepository */
-        $productRepository = $this->get('pim_catalog.repository.product');
         /** @var ProductInterface|null $entity */
-        $entity = $productRepository->find($id);
+        $entity = $this->productRepository->find($id);
 
         if ($entity === null) {
             throw new NotFoundHttpException(
@@ -87,8 +118,7 @@ class MediaFileController extends Controller
             );
         }
 
-        $idPrefixer = $this->get('eikona.utilities.id_prefixer');
-        $prefixedId = $idPrefixer->getPrefixedId($entity);
+        $prefixedId = $this->idPrefixer->getPrefixedId($entity);
 
         $locale = $request->get('dataLocale', null);
         $scope = $request->get('dataScope', null);
@@ -112,10 +142,8 @@ class MediaFileController extends Controller
      */
     public function productmodelGalleryAction(Request $request, $id)
     {
-        /** @var ProductModelRepository $productModelRepository */
-        $productModelRepository = $this->get('pim_catalog.repository.product_model');
         /** @var ProductModelInterface|null $entity */
-        $entity = $productModelRepository->find($id);
+        $entity = $this->productModelRepository->find($id);
 
         if ($entity === null) {
             throw new NotFoundHttpException(
@@ -123,8 +151,7 @@ class MediaFileController extends Controller
             );
         }
 
-        $idPrefixer = $this->get('eikona.utilities.id_prefixer');
-        $prefixedId = $idPrefixer->getPrefixedId($entity);
+        $prefixedId = $this->idPrefixer->getPrefixedId($entity);
 
         $locale = $request->get('dataLocale', null);
         $scope = $request->get('dataScope', null);
@@ -148,18 +175,14 @@ class MediaFileController extends Controller
      */
     protected function gotoTessaWithAuthentication(string $action = self::SSO_ACTION_ASSET_SELECT, $payload = [])
     {
-        $tessa = $this->get('eikona.tessa');
-
-        if (!$tessa->isAvailable()) {
+        if (!$this->tessa->isAvailable()) {
             return $this->render('@EikonaTessaConnector/Tessa/404.html.twig');
         }
 
-        $authGuard = $this->get('eikona.tessa.auth_guard');
-        $tokenStorage = $this->get('security.token_storage');
         /** @var User $user */
-        $user = $tokenStorage->getToken()->getUser();
-        $url = $tessa->getBaseUrl() . '/ui/login.php';
-        $auth = $authGuard->getHmac('GET', $url, time());
+        $user = $this->tokenStorage->getToken()->getUser();
+        $url = $this->tessa->getBaseUrl() . '/ui/login.php';
+        $auth = $this->authGuard->getHmac('GET', $url, time());
 
         $queryParams = [
             'auth' => $auth,

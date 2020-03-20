@@ -8,7 +8,7 @@
 
 namespace Eikona\Tessa\ConnectorBundle\Presenter;
 
-use Akeneo\Asset\Component\Repository\AssetRepositoryInterface;
+use Akeneo\AssetManager\Domain\Repository\AssetRepositoryInterface;
 use Akeneo\Pim\WorkOrganization\Workflow\Bundle\Presenter\PresenterInterface;
 use Akeneo\Tool\Component\StorageUtils\Repository\IdentifiableObjectRepositoryInterface;
 use Eikona\Tessa\ConnectorBundle\AttributeType\AttributeTypes;
@@ -36,14 +36,11 @@ class AssetsCollectionPresenter implements PresenterInterface
     }
 
     /**
-     * @param mixed $value
-     * @return bool
+     * {@inheritDoc}
      */
-    public function supports($value)
+    public function supports(string $attributeType, string $referenceDataName = null): bool
     {
-        $attribute = $this->attributeRepository->findOneByIdentifier($value->getAttributeCode());
-
-        return null !== $attribute && AttributeTypes::TESSA === $attribute->getType();
+        return AttributeTypes::TESSA === $attributeType;
     }
 
     /**

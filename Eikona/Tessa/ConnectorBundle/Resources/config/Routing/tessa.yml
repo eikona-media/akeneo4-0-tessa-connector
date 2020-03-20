@@ -1,4 +1,4 @@
 eikona_tessa:
   path: /
-  defaults: { _controller: EikonaTessaConnectorBundle:Tessa:gotoTessa }
+  defaults: { _controller: eikona.tessa.controller.tessa:gotoTessaAction }
   methods: [GET]

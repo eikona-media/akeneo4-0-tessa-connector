@@ -13,9 +13,9 @@ services:
 
   # ProductNormalizer ohne Berechtigungsabfragen (1)
   eikona.tessa.query.get_associated_product_codes_by_product:
-    class: 'Akeneo\Pim\Enrichment\Bundle\Doctrine\ORM\Query\GetAssociatedProductCodesByProductFromDB'
+    class: 'Akeneo\Pim\Enrichment\Bundle\Storage\Sql\Product\GetAssociatedProductCodesByProductFromDB'
     arguments:
-      - '@doctrine.orm.entity_manager'
+      - '@database_connection'
       - '%pim_catalog.entity.association.class%'
 
   # ProductNormalizer ohne Berechtigungsabfragen (2)

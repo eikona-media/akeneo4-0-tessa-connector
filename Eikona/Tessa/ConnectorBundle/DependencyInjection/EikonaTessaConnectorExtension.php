@@ -42,6 +42,7 @@ class EikonaTessaConnectorExtension extends Extension implements PrependExtensio
     {
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('commands.yml');
+        $loader->load('controllers.yml');
         $loader->load('services.yml');
         $loader->load('event_listener.yml');
         $loader->load('converters.yml');

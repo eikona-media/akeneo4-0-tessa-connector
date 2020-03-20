@@ -5,7 +5,7 @@ services:
   eikona.tessa.workflow.presenter.tessa_assets:
     class: '%eikona.tessa.workflow.presenter.tessa_assets.class%'
     arguments:
-      - '@pimee_product_asset.repository.asset'
+      - '@akeneo_assetmanager.infrastructure.persistence.repository.asset'
       - '@pim_catalog.repository.cached_attribute'
       - '@router'
     tags:

@@ -35,21 +35,18 @@ In some cases Apache is configured wrong, see https://api.akeneo.com/documentati
 composer require eikona-media/akeneo4-0-tessa-connector
 ```
 
-2) Then add the following lines **at the end** of your app/config/routing.yml :
+2) Then add the following lines **at the end** of your config/routes.yml :
 ```yaml
 tessa_media:
     resource: "@EikonaTessaConnectorBundle/Resources/config/routing.yml"
 ```
 
-3) Enable the bundle in the `app/AppKernel.php` file in the `registerProjectBundles()` method:
+3) Enable the bundle in the `config/bundles.php` file:
 ```php
-protected function registerProjectBundles()
-{
-    return [
-        // ...
-        new Eikona\Tessa\ConnectorBundle\EikonaTessaConnectorBundle(),
-    ];
-}
+return [
+    // ...
+    Eikona\Tessa\ConnectorBundle\EikonaTessaConnectorBundle::class => ['all' => true],
+];
 
 ```
 
@@ -84,16 +81,13 @@ Recommended to run every 5 minutes (`*/5 * * * *`). If the command is started tw
 
 ## How to use with reference entities (Enterprise Edition >3.0)
 
-1) Enable the ReferenceDataAttributeBundle in the `app/AppKernel.php` file in the `registerProjectBundles()` method (after the `EikonaTessaConnectorBundle`):
+1) Enable the ReferenceDataAttributeBundle in the `config/bundles.php` file:
 ```php
-protected function registerProjectBundles()
-{
-    return [
-        // ...
-        new Eikona\Tessa\ConnectorBundle\EikonaTessaConnectorBundle(), // Already registered
-        new Eikona\Tessa\ReferenceDataAttributeBundle\EikonaTessaReferenceDataAttributeBundle(), // New
-    ];
-}
+return [
+    // ...
+    Eikona\Tessa\ConnectorBundle\EikonaTessaConnectorBundle::class => ['all' => true], // Already registered
+    Eikona\Tessa\ReferenceDataAttributeBundle\EikonaTessaReferenceDataAttributeBundle::class => ['all' => true], // New
+];
 ```
 
 2) Select TESSA in the type dropdown when you add a new reference entity attribute
