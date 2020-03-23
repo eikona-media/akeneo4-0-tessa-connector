@@ -3,6 +3,7 @@
 namespace Eikona\Tessa\ConnectorBundle;
 
 use Eikona\Tessa\ConnectorBundle\Normalizer\TessaQueueNormalizer;
+use Exception;
 use Monolog\Logger;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Symfony\Component\HttpKernel\Kernel;
@@ -73,14 +74,26 @@ class Tessa
         TessaQueueNormalizer $tessaQueueNormalizer
     )
     {
-        $this->baseUrl = trim($oroGlobal->get('pim_eikona_tessa_connector.base_url'), ' /');
-        $this->uiUrl = trim($oroGlobal->get('pim_eikona_tessa_connector.ui_url'), ' /');
-        $this->username = trim($oroGlobal->get('pim_eikona_tessa_connector.username'));
-        $this->accessToken = trim($oroGlobal->get('pim_eikona_tessa_connector.api_key'));
-        $this->userId = (int)substr($this->accessToken, 0, strpos($this->accessToken, ':'));
-        $this->systemIdentifier = trim($oroGlobal->get('pim_eikona_tessa_connector.system_identifier'));
-        $this->syncInBackground = (bool)$oroGlobal->get('pim_eikona_tessa_connector.sync_in_background');
-        $this->chunkSize = (int)$oroGlobal->get('pim_eikona_tessa_connector.chunk_size');
+        try {
+            $this->baseUrl = trim($oroGlobal->get('pim_eikona_tessa_connector.base_url'), ' /');
+            $this->uiUrl = trim($oroGlobal->get('pim_eikona_tessa_connector.ui_url'), ' /');
+            $this->username = trim($oroGlobal->get('pim_eikona_tessa_connector.username'));
+            $this->accessToken = trim($oroGlobal->get('pim_eikona_tessa_connector.api_key'));
+            $this->userId = (int)substr($this->accessToken, 0, strpos($this->accessToken, ':'));
+            $this->systemIdentifier = trim($oroGlobal->get('pim_eikona_tessa_connector.system_identifier'));
+            $this->syncInBackground = (bool)$oroGlobal->get('pim_eikona_tessa_connector.sync_in_background');
+            $this->chunkSize = (int)$oroGlobal->get('pim_eikona_tessa_connector.chunk_size');
+        } catch(Exception $e) {
+            // This exception happens when the database is missing (first installion, so nothing to concern about)
+            $this->baseUrl = '';
+            $this->uiUrl = '';
+            $this->username = '';
+            $this->accessToken = '';
+            $this->userId = 0;
+            $this->systemIdentifier = '';
+            $this->syncInBackground = false;
+            $this->chunkSize = 100;
+        }
         $this->kernel = $kernel;
         $this->logger = $logger;
         $this->tessaQueueNormalizer = $tessaQueueNormalizer;
