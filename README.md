@@ -35,7 +35,7 @@ In some cases Apache is configured wrong, see https://api.akeneo.com/documentati
 composer require eikona-media/akeneo4-0-tessa-connector
 ```
 
-2) Then add the following lines **at the end** of your config/routes.yml :
+2) Then add the following lines **at the end** of your config/routes/routes.yml :
 ```yaml
 tessa_media:
     resource: "@EikonaTessaConnectorBundle/Resources/config/routing.yml"
