@@ -61,7 +61,7 @@ class MediaFileController extends AbstractController
 
     /**
      * @param $assetId
-     * @return RedirectResponse
+     * @return Response
      */
     public function previewAction($assetId)
     {
@@ -72,7 +72,8 @@ class MediaFileController extends AbstractController
             . '&type=preview'
             . '&key=' . $downloadToken;
 
-        return new RedirectResponse($url, 301);
+        $file = file_get_contents($url);
+        return new Response($file);
     }
 
     /**
