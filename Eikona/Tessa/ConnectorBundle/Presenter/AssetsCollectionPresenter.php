@@ -51,7 +51,7 @@ class AssetsCollectionPresenter implements PresenterInterface
     public function present($data, array $change)
     {
         return [
-            'before' => $this->prepareTessaAssets($data->getData()),
+            'before' => $this->prepareTessaAssets($data),
             'after'  => $this->prepareTessaAssets($change['data'])
         ];
     }
