@@ -59,6 +59,7 @@ class EikonaTessaConnectorExtension extends Extension implements PrependExtensio
         $loader->load('completeness_mask_generators.yml');
 
         if (class_exists('Akeneo\Platform\EnterpriseVersion')) {
+            $loader->load('query_builders_ee.yml');
             $loader->load('presenters_ee.yml');
             $loader->load('renderers_ee.yml');
         } else {
