@@ -72,8 +72,7 @@ class MediaFileController extends AbstractController
             . '&type=preview'
             . '&key=' . $downloadToken;
 
-        $file = file_get_contents($url);
-        return new Response($file);
+        return new RedirectResponse($url, 301);
     }
 
     /**
