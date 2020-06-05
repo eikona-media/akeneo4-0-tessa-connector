@@ -68,3 +68,10 @@ services:
         arguments:
             - '@doctrine.orm.entity_manager'
             - '@eikona.tessa'
+
+    eikona.tessa.security.event_listener.add_csp:
+        class: Eikona\Tessa\ConnectorBundle\EventListener\AddContentSecurityPolicyListener
+        arguments:
+            - '@eikona.tessa'
+        tags:
+            - { name: kernel.event_subscriber, priority: -1 }
