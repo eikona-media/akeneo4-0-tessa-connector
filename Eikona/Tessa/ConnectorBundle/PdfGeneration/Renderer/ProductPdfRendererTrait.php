@@ -31,14 +31,16 @@ trait ProductPdfRendererTrait
         $this->configureOptions($resolver);
 
         $imagePaths = $this->getImagePaths($object, $context['locale'], $context['scope']);
+        $optionLabels = $this->getOptionLabels($object, $context['locale'], $context['scope']);
         $tessaAssets = $this->resolveTessaAssets($object, $context['locale'], $context['scope']);
         $params = array_merge(
             $context,
             [
                 'product'           => $object,
-                'groupedAttributes' => $this->getGroupedAttributes($object, $context['locale']),
+                'groupedAttributes' => $this->getGroupedAttributes($object),
                 'imagePaths'        => $imagePaths,
-                'customFont'        => $this->customFont
+                'customFont'        => $this->customFont,
+                'optionLabels'      => $optionLabels,
             ]
         );
 
@@ -57,7 +59,7 @@ trait ProductPdfRendererTrait
     {
         $tessaAssets = [];
 
-        foreach ($this->getAttributeCodes($product, $locale) as $attributeCode) {
+        foreach ($this->getAttributeCodes($product) as $attributeCode) {
             $attribute = $this->attributeRepository->findOneByIdentifier($attributeCode);
 
             if (null !== $attribute && AttributeTypes::TESSA === $attribute->getType()) {
