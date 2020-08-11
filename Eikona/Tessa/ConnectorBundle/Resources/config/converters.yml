@@ -4,6 +4,7 @@ services:
         class: Eikona\Tessa\ConnectorBundle\ArrayConverter\StandardToFlat\Product\ValueConverter\TessaValueConverter
         arguments:
             - '@pim_connector.array_converter.flat_to_standard.product.attribute_columns_resolver'
+            - '@pim_catalog.repository.cached_attribute'
             - '@eikona.tessa'
             - '@eikona.tessa.auth_guard'
         tags:

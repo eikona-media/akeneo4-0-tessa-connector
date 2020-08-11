@@ -12,6 +12,8 @@ use Akeneo\Pim\Structure\Component\AttributeType\AbstractAttributeType;
 
 class TessaType extends AbstractAttributeType
 {
+    const ATTRIBUTE_CDN_URL = 'tessa_cdn_url';
+
     /**
      * {@inheritdoc}
      */
