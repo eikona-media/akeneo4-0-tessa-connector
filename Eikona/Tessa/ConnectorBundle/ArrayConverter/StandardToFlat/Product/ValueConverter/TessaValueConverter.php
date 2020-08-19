@@ -10,48 +10,27 @@ namespace Eikona\Tessa\ConnectorBundle\ArrayConverter\StandardToFlat\Product\Val
 
 use Akeneo\Pim\Enrichment\Component\Product\Connector\ArrayConverter\FlatToStandard\AttributeColumnsResolver;
 use Akeneo\Pim\Enrichment\Component\Product\Connector\ArrayConverter\StandardToFlat\Product\ValueConverter\AbstractValueConverter;
-use Akeneo\Pim\Enrichment\Component\Product\Connector\ArrayConverter\StandardToFlat\Product\ValueConverter\ValueConverterInterface;
-use Akeneo\Pim\Structure\Component\Model\AttributeInterface;
-use Akeneo\Tool\Component\StorageUtils\Repository\CachedObjectRepositoryInterface;
-use Eikona\Tessa\ConnectorBundle\Security\AuthGuard;
-use Eikona\Tessa\ConnectorBundle\Tessa;
+use Eikona\Tessa\ConnectorBundle\Utilities\LinkGenerator;
 
-class TessaValueConverter extends AbstractValueConverter implements ValueConverterInterface
+class TessaValueConverter extends AbstractValueConverter
 {
     /**
-     *
-     * @var array
+     * @var LinkGenerator
      */
-    private $tessa;
-
-    /**
-     * @var CachedObjectRepositoryInterface
-     */
-    private $attributeRepository;
-
-    /**
-     * @var AuthGuard
-     */
-    private $authGuard;
+    private $linkGenerator;
 
     /**
      * TessaValueConverter constructor.
      *
-     * @param AttributeColumnsResolver        $columnsResolver
-     * @param CachedObjectRepositoryInterface $attributeRepository
-     * @param Tessa                           $tessa
-     * @param AuthGuard                       $authGuard
+     * @param AttributeColumnsResolver $columnsResolver
+     * @param LinkGenerator            $linkGenerator
      */
     public function __construct(
         AttributeColumnsResolver $columnsResolver,
-        CachedObjectRepositoryInterface $attributeRepository,
-        Tessa $tessa,
-        AuthGuard $authGuard
+        LinkGenerator $linkGenerator
     )
     {
-        $this->attributeRepository = $attributeRepository;
-        $this->tessa = $tessa;
-        $this->authGuard = $authGuard;
+        $this->linkGenerator = $linkGenerator;
         parent::__construct($columnsResolver, ['eikona_catalog_tessa']);
     }
 
@@ -65,7 +44,6 @@ class TessaValueConverter extends AbstractValueConverter implements ValueConvert
      */
     public function convert($attributeCode, $data)
     {
-        $attribute = $this->attributeRepository->findOneByIdentifier($attributeCode);
         $convertedItem = [];
 
         foreach ($data as $value) {
@@ -76,7 +54,7 @@ class TessaValueConverter extends AbstractValueConverter implements ValueConvert
             );
 
             $convertedItem[$flatName] = $this->convertAssetIdsToUrls(
-                $attribute,
+                $attributeCode,
                 $value['data'],
                 $value['scope']
             );
@@ -86,31 +64,22 @@ class TessaValueConverter extends AbstractValueConverter implements ValueConvert
     }
 
     /**
-     * @param AttributeInterface $attribute
-     * @param string             $data
-     * @param string             $scope
+     * @param        $attributeCode
+     * @param string $data
+     * @param string $scope
      *
      * @return string
      */
-    private function convertAssetIdsToUrls(AttributeInterface $attribute, $data, $scope)
+    private function convertAssetIdsToUrls($attributeCode, $data, $scope)
     {
         if (trim($data) === '') {
             return '';
         }
 
-        $cdnUrl = $attribute->getProperty('tessa_cdn_url');
-        $scopeText = $scope !== null ? $scope : 'null';
-
         $assetIds = explode(',', $data);
-        $assetUrls = array_map(function ($assetId) use ($cdnUrl, $scope, $scopeText) {
-            if (!empty($cdnUrl)) {
-                return str_replace(
-                    ['{ASSET_ID}', '{SCOPE}'],
-                    [$assetId, $scopeText],
-                    $cdnUrl
-                );
-            }
-            return $this->tessa->getBaseUrl() . "/ui/download.php?asset_system_id=$assetId&kanal=$scope&key={$this->authGuard->getDownloadAuthToken($assetId, 'download')}";
+        $assetUrls = array_map(function ($assetId) use ($attributeCode, $scope) {
+            return $this->linkGenerator->getAssetCdnUrl($assetId, $attributeCode, $scope)
+                ?? $this->linkGenerator->getAssetTessaDownloadUrl($assetId, $scope);
         }, $assetIds);
 
 

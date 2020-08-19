@@ -13,6 +13,18 @@ services:
     eikona.utilities.id_prefixer:
         class: Eikona\Tessa\ConnectorBundle\Utilities\IdPrefixer
 
+    eikona.utilities.link_generator:
+        class: Eikona\Tessa\ConnectorBundle\Utilities\LinkGenerator
+        arguments:
+            - '@eikona.tessa.auth_guard'
+            - '@eikona.tessa'
+            - '@pim_catalog.repository.cached_attribute'
+
+    eikona.utilities.link_parser:
+        class: Eikona\Tessa\ConnectorBundle\Utilities\LinkParser
+        arguments:
+            - '@pim_catalog.repository.cached_attribute'
+
     eikona.tessa.connector.provider.field.mam:
         class: Eikona\Tessa\ConnectorBundle\Enrich\Provider\Field\MamFieldProvider
         tags:

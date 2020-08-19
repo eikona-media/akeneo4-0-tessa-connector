@@ -8,16 +8,32 @@
 
 namespace Eikona\Tessa\ConnectorBundle\ArrayConverter\FlatToStandard\Product\ValueConverter;
 
-use Akeneo\Pim\Enrichment\Component\Product\Connector\ArrayConverter\FlatToStandard\ValueConverter\AbstractValueConverter;
 use Akeneo\Pim\Enrichment\Component\Product\Connector\ArrayConverter\FlatToStandard\FieldSplitter;
+use Akeneo\Pim\Enrichment\Component\Product\Connector\ArrayConverter\FlatToStandard\ValueConverter\AbstractValueConverter;
+use Eikona\Tessa\ConnectorBundle\Utilities\LinkParser;
 
 class TessaValueConverter extends AbstractValueConverter
 {
+    protected $supportedFieldType = ['eikona_catalog_tessa'];
 
-    public function __construct(FieldSplitter $fieldSplitter)
+    /**
+     * @var LinkParser
+     */
+    protected $linkParser;
+
+    /**
+     * TessaValueConverter constructor.
+     *
+     * @param FieldSplitter $fieldSplitter
+     * @param LinkParser    $linkParser
+     */
+    public function __construct(
+        FieldSplitter $fieldSplitter,
+        LinkParser $linkParser
+    )
     {
-        $this->supportedFieldType = ['eikona_catalog_tessa'];
         parent::__construct($fieldSplitter);
+        $this->linkParser = $linkParser;
     }
 
     /**
@@ -27,47 +43,35 @@ class TessaValueConverter extends AbstractValueConverter
      * @param $value
      * @return array
      */
-    public function convert(array $attributeFieldInfo, $value)
+    public function convert(array $attributeFieldInfo, $value): array
     {
-        if ('' !== $value) {
-            $data = trim((string)$value);
-        } else {
+        if ($value === '' || trim((string)$value) === '') {
             $data = null;
+        } else {
+            $data = $this->convertUrlsToAssetIds(
+                trim((string)$value)
+            );
         }
 
-        $result = [
-            $attributeFieldInfo['attribute']->getCode() => [
-                [
-                    'locale' => $attributeFieldInfo['locale_code'],
-                    'scope' => $attributeFieldInfo['scope_code'],
-                    'data' => $data,
-                ],
-            ],
-        ];
-
-        $data = $result[$attributeFieldInfo['attribute']->getCode()][0]['data'];
-
-        if (trim($data) === '') {
-            return $result;
-        }
-
-        $convertedValues = array_map(
-            function ($url) {
-                $matches = null;
-                preg_match('/asset\_system\_id\=(\d+)/', $url, $matches);
-
-                return $matches[1];
-            },
-            explode(';', $data)
-        );
-
-        $result[$attributeFieldInfo['attribute']->getCode()][0]['data'] = implode(
-            ',',
-            $convertedValues
-        );
-
-        return $result;
-
+        return [$attributeFieldInfo['attribute']->getCode() => [[
+            'locale' => $attributeFieldInfo['locale_code'],
+            'scope'  => $attributeFieldInfo['scope_code'],
+            'data'   => $data,
+        ]]];
     }
 
+    /**
+     * @param string $data
+     *
+     * @return string
+     */
+    private function convertUrlsToAssetIds($data): string
+    {
+        $assetUrls = explode(';', $data);
+        $assetIds = array_map(function ($assetUrl) {
+            return  $this->linkParser->getAssetIdFromTessaUrl($assetUrl);
+        }, $assetUrls);
+
+        return implode(',', $assetIds);
+    }
 }
