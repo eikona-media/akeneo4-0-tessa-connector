@@ -60,16 +60,16 @@ class LinkGenerator
      *
      * @return string|null
      */
-    public function getAssetCdnUrl($assetId, $attributeCode, $scopeCode): ?string
+    public function getAssetExportUrl($assetId, $attributeCode, $scopeCode): ?string
     {
         $attribute = $this->attributeRepository->findOneByIdentifier($attributeCode);
-        $cdnUrl = $attribute->getProperty(TessaType::ATTRIBUTE_CDN_URL);
+        $exportUrl = $attribute->getProperty(TessaType::ATTRIBUTE_EXPORT_URL);
 
-        if (!empty($cdnUrl)) {
+        if (!empty($exportUrl)) {
             return str_replace(
                 ['{ASSET_ID}', '{SCOPE}'],
                 [$assetId, $scopeCode],
-                $cdnUrl
+                $exportUrl
             );
         }
 

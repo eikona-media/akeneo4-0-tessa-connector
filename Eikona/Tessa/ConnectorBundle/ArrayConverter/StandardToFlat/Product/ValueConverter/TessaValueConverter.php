@@ -78,7 +78,7 @@ class TessaValueConverter extends AbstractValueConverter
 
         $assetIds = explode(',', $data);
         $assetUrls = array_map(function ($assetId) use ($attributeCode, $scope) {
-            return $this->linkGenerator->getAssetCdnUrl($assetId, $attributeCode, $scope)
+            return $this->linkGenerator->getAssetExportUrl($assetId, $attributeCode, $scope)
                 ?? $this->linkGenerator->getAssetTessaDownloadUrl($assetId, $scope);
         }, $assetIds);
 

@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraint;
 class EikonaTessaAttributeConstraint extends Constraint
 {
     public $cannotUseScopePlaceholder = 'The placeholder "{SCOPE}" is not allowed because the attribute is not scopable.';
-    public $invalidPlaceholder = 'Invalid placeholder(s): "{{PLACEHOLDERS}}".';
+    public $invalidPlaceholder = 'Invalid placeholder(s): "{{invalidPlaceholders}}". Allowed placeholders are: {{allowedPlaceholders}}.';
 
     /**
      * {@inheritDoc}

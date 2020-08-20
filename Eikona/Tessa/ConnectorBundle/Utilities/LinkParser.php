@@ -53,16 +53,16 @@ class LinkParser
      *
      * @return int|null
      */
-    public function getAssetIdFromCdnUrl($assetUrl, $attributeCode): ?int
+    public function getAssetIdFromExportUrl($assetUrl, $attributeCode): ?int
     {
         $attribute = $this->attributeRepository->findOneByIdentifier($attributeCode);
-        $cdnUrl = $attribute->getProperty(TessaType::ATTRIBUTE_CDN_URL);
+        $exportUrl = $attribute->getProperty(TessaType::ATTRIBUTE_EXPORT_URL);
 
-        if (!empty($cdnUrl)) {
+        if (!empty($exportUrl)) {
             $regex = str_replace(
                 ['{ASSET_ID}', '{SCOPE}'],
                 ['PLACEHOLDER_ASSET_ID', 'PLACEHOLDER_SCOPE'],
-                $cdnUrl
+                $exportUrl
             );
             $regex = preg_quote($regex, '/');
             $regex = implode('(?P<assetId>\d+)', explode('PLACEHOLDER_ASSET_ID', $regex, 2));

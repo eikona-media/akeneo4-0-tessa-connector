@@ -55,8 +55,8 @@ class AttributeNormalizer implements NormalizerInterface
     {
         $properties = [];
 
-        $productsOnly = $attribute->getProperty(TessaType::ATTRIBUTE_CDN_URL);
-        $properties[TessaType::ATTRIBUTE_CDN_URL] = $productsOnly;
+        $exportUrl = $attribute->getProperty(TessaType::ATTRIBUTE_EXPORT_URL);
+        $properties[TessaType::ATTRIBUTE_EXPORT_URL] = $exportUrl;
 
         return $properties;
     }

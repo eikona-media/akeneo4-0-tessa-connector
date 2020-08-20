@@ -1,7 +1,7 @@
 parameters:
   eikona.media.tessa.updater.attribute.class: Eikona\Tessa\ConnectorBundle\Updater\TessaAttributeUpdater
   eikona.media.tessa.updater.attribute.properties:
-    - !php/const Eikona\Tessa\ConnectorBundle\AttributeType\TessaType::ATTRIBUTE_CDN_URL
+    - !php/const Eikona\Tessa\ConnectorBundle\AttributeType\TessaType::ATTRIBUTE_EXPORT_URL
 
 services:
   eikona.media.tessa.updater.attribute:
