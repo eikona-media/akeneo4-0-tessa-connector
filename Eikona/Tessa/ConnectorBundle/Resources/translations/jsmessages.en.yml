@@ -38,6 +38,8 @@ tessa:
   attribute:
       max_assets:
           label: Max assets
+      tessa_export_url:
+          label: Export Url
   datagrid:
     cell:
       assets: "{{ count }} asset|{{ count }} assets"

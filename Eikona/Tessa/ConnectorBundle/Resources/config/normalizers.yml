@@ -31,3 +31,20 @@ services:
       - '@pim_catalog.normalizer.standard.product.properties'
       - '@eikona.tessa.normalizer.standard.product.associations'
 
+  # Attribut
+  eikona.media.tessa.normalizer.attribute:
+    class: Eikona\Tessa\ConnectorBundle\Normalizer\AttributeNormalizer
+    decorates: pim_enrich.normalizer.attribute
+    arguments:
+      - '@eikona.media.tessa.normalizer.attribute.inner'
+    tags:
+      - { name: pim_internal_api_serializer.normalizer, priority: 89 }
+
+  # Attribut
+  eikona.media.tessa.normalizer.standard.attribute:
+    class: Eikona\Tessa\ConnectorBundle\Normalizer\AttributeNormalizer
+    decorates: pim_catalog.normalizer.standard.attribute
+    arguments:
+      - '@eikona.media.tessa.normalizer.standard.attribute.inner'
+    tags:
+      - { name: pim_serializer.normalizer, priority: 89 }

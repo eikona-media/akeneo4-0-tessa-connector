@@ -5,3 +5,9 @@ services:
             - ['pim_catalog_image', 'pim_assets_collection', 'eikona_catalog_tessa']
         tags:
             - { name: validator.constraint_validator, alias: pim_family_attribute_as_image_validator }
+
+    eikona.tessa.validator.constraint_validator.attribute:
+        class: Eikona\Tessa\ConnectorBundle\Validator\Constraints\EikonaTessaAttributeConstraintValidator
+        tags:
+            - { name: validator.constraint_validator, alias: eikona_tessa_validator_constraint_validator_attribute }
+

@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.1.0 (2020-08-26)
+* [feature] Added the ability to define an Export-URL in the attribute settings, which is used by the csv/xlsx export
+
 ## 1.0.3 (2020-07-15)
 * [bugfix] Fixed the product pdf generation
 

@@ -12,6 +12,8 @@ use Akeneo\Pim\Structure\Component\AttributeType\AbstractAttributeType;
 
 class TessaType extends AbstractAttributeType
 {
+    const ATTRIBUTE_EXPORT_URL = 'tessa_export_url';
+
     /**
      * {@inheritdoc}
      */

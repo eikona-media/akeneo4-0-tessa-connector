@@ -4,13 +4,14 @@ services:
         class: Eikona\Tessa\ConnectorBundle\ArrayConverter\StandardToFlat\Product\ValueConverter\TessaValueConverter
         arguments:
             - '@pim_connector.array_converter.flat_to_standard.product.attribute_columns_resolver'
-            - '@eikona.tessa'
-            - '@eikona.tessa.auth_guard'
+            - '@eikona.utilities.link_generator'
         tags:
             - { name: 'pim_connector.array_converter.standard_to_flat.product.value_converter' }
     # Dieser Service sorgt dafür, dass beim Import die URLs in AssetIDs umgewandelt werden
     eikona.tessa.array_converter.flat_to_standard.product.value_converter.tessa:
         class: Eikona\Tessa\ConnectorBundle\ArrayConverter\FlatToStandard\Product\ValueConverter\TessaValueConverter
         parent: pim_connector.array_converter.flat_to_standard.product.value_converter.abstract
+        arguments:
+            - '@eikona.utilities.link_parser'
         tags:
             - { name: 'pim_connector.array_converter.flat_to_standard.product.value_converter' }
