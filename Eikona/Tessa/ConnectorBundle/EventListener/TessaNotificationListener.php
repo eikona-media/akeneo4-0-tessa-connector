@@ -16,13 +16,24 @@ use Akeneo\Pim\Enrichment\Component\Product\Repository\ProductModelRepositoryInt
 use Akeneo\Pim\Enrichment\Component\Product\Repository\ProductRepositoryInterface;
 use Akeneo\Tool\Component\Classification\Model\CategoryInterface;
 use Akeneo\Tool\Component\StorageUtils\Event\RemoveEvent;
+use Akeneo\UserManagement\Bundle\Context\UserContext;
 use Doctrine\ORM\EntityManager;
 use Eikona\Tessa\ConnectorBundle\Services\TessaNotificationQueueService;
 use Eikona\Tessa\ConnectorBundle\Tessa;
+use Psr\Http\Message\RequestInterface;
 use Symfony\Component\EventDispatcher\GenericEvent;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Route;
+use Symfony\Component\Routing\Router;
 
 class TessaNotificationListener
 {
+    protected const IGNORED_API_ROUTES_FOR_TESSA = [
+        'pim_api_product_partial_update',
+        'pim_api_product_model_partial_update',
+    ];
+
     /** @var Tessa */
     protected $tessa;
 
@@ -41,19 +52,29 @@ class TessaNotificationListener
     /** @var TessaNotificationQueueService */
     protected $tessaNotificationQueueService;
 
+    /** @var UserContext */
+    protected $userContext;
+
+    /** @var RequestStack */
+    protected $requestStack;
+
     /**
-     * @param Tessa $tessa
-     * @param EntityManager $entityManager
-     * @param ProductRepositoryInterface $productRepository
+     * @param Tessa                           $tessa
+     * @param EntityManager                   $entityManager
+     * @param ProductRepositoryInterface      $productRepository
      * @param ProductModelRepositoryInterface $productModelRepository
-     * @param TessaNotificationQueueService $tessaNotificationQueueService
+     * @param TessaNotificationQueueService   $tessaNotificationQueueService
+     * @param UserContext                     $userContext
+     * @param RequestStack                    $requestStack
      */
     public function __construct(
         Tessa $tessa,
         EntityManager $entityManager,
         ProductRepositoryInterface $productRepository,
         ProductModelRepositoryInterface $productModelRepository,
-        TessaNotificationQueueService $tessaNotificationQueueService
+        TessaNotificationQueueService $tessaNotificationQueueService,
+        UserContext $userContext,
+        RequestStack $requestStack
     )
     {
         $this->tessa = $tessa;
@@ -61,6 +82,8 @@ class TessaNotificationListener
         $this->productRepository = $productRepository;
         $this->productModelRepository = $productModelRepository;
         $this->tessaNotificationQueueService = $tessaNotificationQueueService;
+        $this->userContext = $userContext;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -68,6 +91,10 @@ class TessaNotificationListener
      */
     public function onPostSave(GenericEvent $event)
     {
+        if (!$this->shouldNotify()) {
+            return;
+        }
+
         $subject = $event->getSubject();
 
         if ($subject instanceof CategoryInterface || $subject instanceof ChannelInterface || $subject instanceof GroupInterface) {
@@ -150,6 +177,10 @@ class TessaNotificationListener
      */
     public function onPreRemove(RemoveEvent $event)
     {
+        if (!$this->shouldNotify()) {
+            return;
+        }
+
         $id = $event->getSubjectId();
         $subject = $event->getSubject();
 
@@ -193,6 +224,10 @@ class TessaNotificationListener
      */
     public function onPostRemove(RemoveEvent $event)
     {
+        if (!$this->shouldNotify()) {
+            return;
+        }
+
         $id = $event->getSubjectId();
         $subject = $event->getSubject();
 
@@ -225,5 +260,33 @@ class TessaNotificationListener
                 unset($this->productModelStore[$id]);
             }
         }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function shouldNotify(): bool
+    {
+        if ($this->requestStack->getCurrentRequest() === null) {
+            return true;
+        }
+
+        /** @var Route $route */
+        $route = $this->requestStack->getCurrentRequest()->get('_route');
+        if (!in_array($route, self::IGNORED_API_ROUTES_FOR_TESSA, true)) {
+            return true;
+        }
+
+        $user = $this->userContext->getUser();
+        if ($user === null) {
+            return true;
+        }
+
+        $tessaUser = $this->tessa->getUserUsedByTessa();
+        if ($user->getUsername() !== $tessaUser) {
+            return true;
+        }
+
+        return false;
     }
 }

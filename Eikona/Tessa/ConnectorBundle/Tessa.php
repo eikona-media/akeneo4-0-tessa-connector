@@ -56,6 +56,9 @@ class Tessa
     /** @var int */
     protected $chunkSize;
 
+    /** @var string */
+    protected $userUsedByTessa;
+
     /** @var TessaQueueNormalizer */
     protected $tessaQueueNormalizer;
 
@@ -83,6 +86,7 @@ class Tessa
             $this->systemIdentifier = trim($oroGlobal->get('pim_eikona_tessa_connector.system_identifier'));
             $this->syncInBackground = (bool)$oroGlobal->get('pim_eikona_tessa_connector.sync_in_background');
             $this->chunkSize = (int)$oroGlobal->get('pim_eikona_tessa_connector.chunk_size');
+            $this->userUsedByTessa = trim($oroGlobal->get('pim_eikona_tessa_connector.user_used_by_tessa'));
         } catch(Exception $e) {
             // This exception happens when the database is missing (first installion, so nothing to concern about)
             $this->baseUrl = '';
@@ -93,6 +97,7 @@ class Tessa
             $this->systemIdentifier = '';
             $this->syncInBackground = false;
             $this->chunkSize = 100;
+            $this->userUsedByTessa = '';
         }
         $this->kernel = $kernel;
         $this->logger = $logger;
@@ -161,6 +166,14 @@ class Tessa
     public function getChunkSize(): int
     {
         return $this->chunkSize;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUserUsedByTessa()
+    {
+        return $this->userUsedByTessa;
     }
 
     /**

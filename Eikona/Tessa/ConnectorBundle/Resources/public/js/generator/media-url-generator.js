@@ -4,11 +4,13 @@ define(
   [
     'jquery',
     'underscore',
-    'routing'
+    'routing',
+    'pim/media-url-generator-base'
   ], function (
     $,
     _,
-    Routing
+    Routing,
+    Base
   ) {
     return {
       tessaPrefix: '%tessa%_',
@@ -22,18 +24,12 @@ define(
        * @return {string}
        */
       getMediaShowUrl (filePath, filter) {
-
         if (this.isTessaImage(filePath)) {
           const assetId = filePath.substr(this.tessaPrefix.length);
           return Routing.generate('eikona_tessa_media_preview', {assetId});
         }
 
-        const filename = encodeURIComponent(filePath);
-
-        return Routing.generate('pim_enrich_media_show', {
-          filename,
-          filter
-        });
+        return Base.getMediaShowUrl(filePath, filter);
       },
 
       /**
@@ -44,17 +40,12 @@ define(
        * @return {string}
        */
       getMediaDownloadUrl (filePath) {
-
         if (this.isTessaImage(filePath)) {
           const assetId = filePath.substr(this.tessaPrefix.length);
           return Routing.generate('eikona_tessa_media_detail', {assetId});
         }
 
-        const filename = encodeURIComponent(filePath);
-
-        return Routing.generate('pim_enrich_media_download', {
-          filename
-        });
+        return Base.getMediaDownloadUrl(filePath);
       },
 
       isTessaImage (filePath) {
