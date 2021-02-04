@@ -2,6 +2,7 @@
 
 ## Unreleased
 * [bugfix] Allowed attributes of type 'pim_catalog_asset_collection' as main image
+* [bugfix] Fixed api for reference entities when using TESSA attributes
 
 ## 1.1.0 (2020-08-26)
 * [feature] Added the ability to define an Export-URL in the attribute settings, which is used by the csv/xlsx export
