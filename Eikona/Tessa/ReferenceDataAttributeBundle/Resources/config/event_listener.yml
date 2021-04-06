@@ -1,0 +1,12 @@
+services:
+    eikona.tessa.listener.tessa_notification:
+        class: Eikona\Tessa\ReferenceDataAttributeBundle\EventListener\TessaNotificationListener
+        arguments:
+            - '@eikona.tessa'
+            - '@akeneo_referenceentity.infrastructure.persistence.repository.reference_entity'
+            - '@pim_user.context.user'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: Akeneo\ReferenceEntity\Domain\Event\RecordUpdatedEvent, method: onEntityRecordUpdated }
+            - { name: kernel.event_listener, event: Akeneo\ReferenceEntity\Domain\Event\RecordDeletedEvent, method: onEntityRecordDeleted }
+            - { name: kernel.event_listener, event: Akeneo\ReferenceEntity\Domain\Event\ReferenceEntityRecordsDeletedEvent, method: onEntityRecordsDeleted }

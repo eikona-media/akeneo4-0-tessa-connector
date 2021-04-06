@@ -53,6 +53,7 @@ class EikonaTessaConnectorExtension extends Extension implements PrependExtensio
         $loader->load('factories.yml');
         $loader->load('validators.yml');
         $loader->load('normalizers.yml');
+        $loader->load('notification_normalizers.yml');
         $loader->load('query_builders.yml');
         $loader->load('datagrid/attribute_types.yml');
         $loader->load('datagrid/filters.yml');
