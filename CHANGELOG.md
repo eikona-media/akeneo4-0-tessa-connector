@@ -1,5 +1,8 @@
 # Changelog
 
+## Unreleased
+* [feature] Automatically sync reference entities with TESSA
+
 ## 1.1.1 (2020-02-04)
 * [bugfix] Allowed attributes of type 'pim_catalog_asset_collection' as main image
 * [bugfix] Fixed api for reference entities when using TESSA attributes
