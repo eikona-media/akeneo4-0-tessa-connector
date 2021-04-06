@@ -227,11 +227,11 @@ class Tessa
     }
 
     /**
-     * @param int $id
+     * @param int|string $id
      * @param string $identifier
      * @param string $type
      */
-    public function notifySingleDeletion(int $id, string $identifier, string $type)
+    public function notifySingleDeletion($id, string $identifier, string $type)
     {
         $this->sendNotificationToTessa($this->notificationNormalizer->normalizeDeletion($type, $id, $identifier));
     }

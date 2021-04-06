@@ -48,7 +48,7 @@ class CategoryNotificationNormalizer implements NotificationNormalizerInterface
             'code' => $entity->getCode(),
             'type' => Tessa::TYPE_CATEGORY,
             'context' => Tessa::CONTEXT_UPDATE,
-            'data' => $this->normalizer->normalize($entity),
+            'data' => $this->normalizer->normalize($entity, 'standard'),
         ];
     }
 

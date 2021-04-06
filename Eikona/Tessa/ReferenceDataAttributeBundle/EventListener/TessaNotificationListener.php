@@ -11,7 +11,7 @@ namespace Eikona\Tessa\ReferenceDataAttributeBundle\EventListener;
 use Akeneo\ReferenceEntity\Domain\Event\RecordDeletedEvent;
 use Akeneo\ReferenceEntity\Domain\Event\RecordUpdatedEvent;
 use Akeneo\ReferenceEntity\Domain\Event\ReferenceEntityRecordsDeletedEvent;
-use Akeneo\ReferenceEntity\Domain\Repository\ReferenceEntityRepositoryInterface;
+use Akeneo\ReferenceEntity\Domain\Repository\RecordRepositoryInterface;
 use Akeneo\UserManagement\Bundle\Context\UserContext;
 use Eikona\Tessa\ConnectorBundle\Tessa;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,8 +25,8 @@ class TessaNotificationListener
     /** @var Tessa */
     protected $tessa;
 
-    /** @var ReferenceEntityRepositoryInterface */
-    protected $referenceEntityRepository;
+    /** @var RecordRepositoryInterface */
+    protected $recordRepository;
 
     /** @var UserContext */
     protected $userContext;
@@ -35,20 +35,20 @@ class TessaNotificationListener
     protected $requestStack;
 
     /**
-     * @param Tessa                              $tessa
-     * @param ReferenceEntityRepositoryInterface $referenceEntityRepository
-     * @param UserContext                        $userContext
-     * @param RequestStack                       $requestStack
+     * @param Tessa                     $tessa
+     * @param RecordRepositoryInterface $recordRepository
+     * @param UserContext               $userContext
+     * @param RequestStack              $requestStack
      */
     public function __construct(
         Tessa $tessa,
-        ReferenceEntityRepositoryInterface $referenceEntityRepository,
+        RecordRepositoryInterface $recordRepository,
         UserContext $userContext,
         RequestStack $requestStack
     )
     {
         $this->tessa = $tessa;
-        $this->referenceEntityRepository = $referenceEntityRepository;
+        $this->recordRepository = $recordRepository;
         $this->userContext = $userContext;
         $this->requestStack = $requestStack;
     }
@@ -59,7 +59,7 @@ class TessaNotificationListener
             return;
         }
 
-        $record = $this->referenceEntityRepository->getByIdentifier($event->getReferenceEntityIdentifier());
+        $record = $this->recordRepository->getByIdentifier($event->getRecordIdentifier());
         $this->tessa->notifySingleModification($record);
     }
 
