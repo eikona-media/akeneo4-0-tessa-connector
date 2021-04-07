@@ -77,6 +77,7 @@ class ReferenceEntityNotificationNormalizer implements NotificationNormalizerInt
         return [
             'id' => (string)$entity->getIdentifier(),
             'code' => (string)$entity->getIdentifier(),
+            'parentId' => (string)$entity->getReferenceEntityIdentifier(),
             'type' => Tessa::TYPE_ENTITY_RECORD,
             'context' => Tessa::CONTEXT_UPDATE,
             'data' => $normalizedConnectorRecord
