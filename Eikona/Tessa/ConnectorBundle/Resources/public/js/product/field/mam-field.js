@@ -217,8 +217,13 @@ define(
           prefix = 'PM-';
         }
 
+        const identifier = (this.productAttributes.model_type === 'product_model')
+          ? this.context.entity.code
+          : this.context.entity.identifier;
+
         const data = {
           ProductId: prefix + this.productAttributes.id,
+          identifier,
           attribute: JSON.stringify({
             code: this.attribute.code,
             type: this.attribute.type,
