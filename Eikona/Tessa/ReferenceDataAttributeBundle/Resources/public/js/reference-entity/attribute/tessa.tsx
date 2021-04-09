@@ -85,6 +85,7 @@ export interface NormalizedTessaAttribute extends NormalizedAttribute {
   type: 'tessa';
   max_assets: NormalizedTessaMaxAssets;
   allowed_extensions: NormalizedAllowedExtensions;
+  canEditAssetsInAkeneoUi: boolean;
 }
 
 /**
@@ -93,6 +94,7 @@ export interface NormalizedTessaAttribute extends NormalizedAttribute {
 export interface TessaAttribute extends Attribute {
   maxAssets: TessaMaxAssets;
   allowedExtensions: AllowedExtensions;
+  canEditAssetsInAkeneoUi: boolean;
 
   normalize(): NormalizedTessaAttribute;
 }
@@ -116,7 +118,8 @@ export class ConcreteTessaAttribute extends ConcreteAttribute implements TessaAt
     order: number,
     is_required: boolean,
     readonly maxAssets: TessaMaxAssets,
-    readonly allowedExtensions: AllowedExtensions
+    readonly allowedExtensions: AllowedExtensions,
+    readonly canEditAssetsInAkeneoUi: boolean
   ) {
     super(
       identifier,
@@ -158,7 +161,8 @@ export class ConcreteTessaAttribute extends ConcreteAttribute implements TessaAt
       normalizedTessaAttribute.order,
       normalizedTessaAttribute.is_required,
       TessaMaxAssets.createFromNormalized(normalizedTessaAttribute.max_assets),
-      AllowedExtensions.createFromNormalized(normalizedTessaAttribute.allowed_extensions)
+      AllowedExtensions.createFromNormalized(normalizedTessaAttribute.allowed_extensions),
+      normalizedTessaAttribute.canEditAssetsInAkeneoUi
     );
   }
 
@@ -171,6 +175,7 @@ export class ConcreteTessaAttribute extends ConcreteAttribute implements TessaAt
       type: 'tessa',
       max_assets: this.maxAssets.normalize(),
       allowed_extensions: this.allowedExtensions.normalize(),
+      canEditAssetsInAkeneoUi: this.canEditAssetsInAkeneoUi
     };
   }
 }

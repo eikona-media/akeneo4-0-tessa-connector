@@ -20,10 +20,25 @@ use Akeneo\ReferenceEntity\Domain\Model\Attribute\AttributeValuePerChannel;
 use Akeneo\ReferenceEntity\Domain\Model\Attribute\AttributeValuePerLocale;
 use Akeneo\ReferenceEntity\Domain\Model\LabelCollection;
 use Akeneo\ReferenceEntity\Domain\Model\ReferenceEntity\ReferenceEntityIdentifier;
+use Eikona\Tessa\ConnectorBundle\Tessa;
 use Eikona\Tessa\ReferenceDataAttributeBundle\Attribute\Property\MaxAssets\AttributeTessaMaxAssets;
 
 class TessaAttributeFactory implements AttributeFactoryInterface
 {
+    /**
+     * @var Tessa
+     */
+    protected $tessa;
+
+    /**
+     * TessaAttributeFactory constructor.
+     *
+     * @param Tessa $tessa
+     */
+    public function __construct(Tessa $tessa)
+    {
+        $this->tessa = $tessa;
+    }
 
     public function supports(AbstractCreateAttributeCommand $command): bool
     {
@@ -46,7 +61,7 @@ class TessaAttributeFactory implements AttributeFactoryInterface
         }
 
         /** @var CreateTessaAttributeCommand $command */
-        return TessaAttribute::createTessa(
+        $attribute = TessaAttribute::createTessa(
             $identifier,
             ReferenceEntityIdentifier::fromString($command->referenceEntityIdentifier),
             AttributeCode::fromString($command->code),
@@ -58,5 +73,8 @@ class TessaAttributeFactory implements AttributeFactoryInterface
             AttributeTessaMaxAssets::fromInteger($command->maxAssets),
             AttributeAllowedExtensions::fromList($command->allowedExtensions)
         );
+
+        $attribute->setTessa($this->tessa);
+        return $attribute;
     }
 }

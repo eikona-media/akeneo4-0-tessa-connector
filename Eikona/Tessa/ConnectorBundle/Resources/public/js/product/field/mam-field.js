@@ -85,6 +85,7 @@ define(
         return this.fieldTemplate({
           value,
           assets,
+          canEditAssetsInAkeneoUi: context.attribute.meta.canEditAssetsInAkeneoUi,
           isReadOnly: !this.isEditable()
         });
       },

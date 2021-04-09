@@ -128,3 +128,25 @@
         <%- _.__('tessa.configuration.userusedbytessa.description') %>
     </div>
 </div>
+<div class="AknFieldContainer">
+    <div class="AknFieldContainer-header">
+        <label class="AknFieldContainer-label control-label AknFieldContainer-label required"
+               for="pim_eikona_tessa_connector___disable_asset_editing_in_akeneo_ui">
+            <%- _.__('tessa.configuration.disableasseteditinginakeneoui.label') %>
+        </label>
+    </div>
+    <div class="AknFieldContainer-inputContainer">
+        <div class="switch switch-small" data-on-label="Yes" data-off-label="No">
+            <input
+                id="pim_eikona_tessa_connector___disable_asset_editing_in_akeneo_ui"
+                type="checkbox"
+                name="pim_eikona_tessa_connector___disable_asset_editing_in_akeneo_ui"
+                class="tessa-config"
+            <% if (disableAssetEditingInAkeneoInUi) { %> checked<% } %>
+            >
+        </div>
+    </div>
+    <div class="AknFieldContainer-footer">
+        <%- _.__('tessa.configuration.disableasseteditinginakeneoui.description') %>
+    </div>
+</div>

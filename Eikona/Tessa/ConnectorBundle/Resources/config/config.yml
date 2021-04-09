@@ -24,4 +24,7 @@ pim_eikona_tessa_connector:
         user_used_by_tessa:
             value: ~
             scope: app
+        disable_asset_editing_in_akeneo_ui:
+            value: false
+            scope: app
 

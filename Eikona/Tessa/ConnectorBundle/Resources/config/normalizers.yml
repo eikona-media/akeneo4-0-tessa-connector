@@ -30,6 +30,8 @@ services:
     decorates: pim_enrich.normalizer.attribute
     arguments:
       - '@eikona.media.tessa.normalizer.attribute.inner'
+    calls:
+      - setTessa: ['@eikona.tessa']
     tags:
       - { name: pim_internal_api_serializer.normalizer, priority: 89 }
 
@@ -39,5 +41,7 @@ services:
     decorates: pim_catalog.normalizer.standard.attribute
     arguments:
       - '@eikona.media.tessa.normalizer.standard.attribute.inner'
+    calls:
+      - setTessa: ['@eikona.tessa']
     tags:
       - { name: pim_serializer.normalizer, priority: 89 }

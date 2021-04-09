@@ -34,6 +34,9 @@ tessa:
     userusedbytessa:
       label: User name for Akeneo-API
       description: Akeneo user, which is used by TESSA for access to the Akeneo-API
+    disableasseteditinginakeneoui:
+      label: Disable asset editing in Akeneo UI
+      description: Disables the editing of assets in the Akeneo UI. Assets can only be edited via the asset dialog.
     tab:
       label: TESSA
     link:

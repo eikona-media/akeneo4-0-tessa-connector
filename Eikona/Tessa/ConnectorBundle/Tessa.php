@@ -64,6 +64,9 @@ class Tessa
     /** @var string */
     protected $userUsedByTessa;
 
+    /** @var bool */
+    protected $isAssetEditingInAkeneoUiDisabled;
+
     /** @var NotificationNormalizer */
     protected $notificationNormalizer;
 
@@ -92,6 +95,7 @@ class Tessa
             $this->syncInBackground = (bool)$oroGlobal->get('pim_eikona_tessa_connector.sync_in_background');
             $this->chunkSize = (int)$oroGlobal->get('pim_eikona_tessa_connector.chunk_size');
             $this->userUsedByTessa = trim($oroGlobal->get('pim_eikona_tessa_connector.user_used_by_tessa'));
+            $this->isAssetEditingInAkeneoUiDisabled = (bool)$oroGlobal->get('pim_eikona_tessa_connector.disable_asset_editing_in_akeneo_ui');
         } catch(Exception $e) {
             // This exception happens when the database is missing (first installion, so nothing to concern about)
             $this->baseUrl = '';
@@ -103,6 +107,7 @@ class Tessa
             $this->syncInBackground = false;
             $this->chunkSize = 100;
             $this->userUsedByTessa = '';
+            $this->isAssetEditingInAkeneoUiDisabled = false;
         }
         $this->kernel = $kernel;
         $this->logger = $logger;
@@ -179,6 +184,14 @@ class Tessa
     public function getUserUsedByTessa()
     {
         return $this->userUsedByTessa;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAssetEditingInAkeneoUiDisabled()
+    {
+        return $this->isAssetEditingInAkeneoUiDisabled;
     }
 
     /**

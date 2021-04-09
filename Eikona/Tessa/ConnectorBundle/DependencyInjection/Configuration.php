@@ -83,6 +83,13 @@ class Configuration implements ConfigurationInterface
             ->scalarNode('scope')->end()
             ->end()
             ->end()
+            # disable_asset_editing_in_akeneo_ui
+            ->arrayNode('disable_asset_editing_in_akeneo_ui')
+            ->children()
+            ->booleanNode('value')->end()
+            ->scalarNode('scope')->end()
+            ->end()
+            ->end()
             ->end()
             ->end();
 

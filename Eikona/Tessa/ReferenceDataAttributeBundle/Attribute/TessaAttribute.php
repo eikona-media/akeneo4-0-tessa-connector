@@ -18,11 +18,15 @@ use Akeneo\ReferenceEntity\Domain\Model\Attribute\AttributeValuePerChannel;
 use Akeneo\ReferenceEntity\Domain\Model\Attribute\AttributeValuePerLocale;
 use Akeneo\ReferenceEntity\Domain\Model\LabelCollection;
 use Akeneo\ReferenceEntity\Domain\Model\ReferenceEntity\ReferenceEntityIdentifier;
+use Eikona\Tessa\ConnectorBundle\Tessa;
 use Eikona\Tessa\ReferenceDataAttributeBundle\Attribute\Property\MaxAssets\AttributeTessaMaxAssets;
 
 class TessaAttribute extends AbstractAttribute
 {
     const ATTRIBUTE_TYPE = 'tessa';
+
+    /** @var Tessa|null */
+    private $tessa = null;
 
     /** @var AttributeTessaMaxAssets */
     private $maxAssets;
@@ -85,6 +89,11 @@ class TessaAttribute extends AbstractAttribute
         );
     }
 
+    public function setTessa(Tessa $tessa)
+    {
+        $this->tessa = $tessa;
+    }
+
     public function setMaxAssets(AttributeTessaMaxAssets $maxAssets): void
     {
         $this->maxAssets = $maxAssets;
@@ -105,11 +114,16 @@ class TessaAttribute extends AbstractAttribute
 
     public function normalize(): array
     {
+        $canEditAssetsInAkeneoUi = $this->tessa !== null
+            ? !$this->tessa->isAssetEditingInAkeneoUiDisabled()
+            : true;
+
         return array_merge(
             parent::normalize(),
             [
                 'max_assets' => $this->maxAssets->normalize(),
                 'allowed_extensions' => $this->allowedExtensions->normalize(),
+                'canEditAssetsInAkeneoUi' => $canEditAssetsInAkeneoUi,
             ]
         );
     }

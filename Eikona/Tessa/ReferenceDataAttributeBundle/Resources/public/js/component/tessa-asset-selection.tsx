@@ -59,6 +59,7 @@ export default class TessaAssetSelection extends React.Component<Props, { modalV
   }
 
   render() {
+    const canEditAssetsInAkeneoUi = this.props.attribute.canEditAssetsInAkeneoUi;
     return (
       <>
         <div className={"EikonAssetGallery " + (!this.props.canEditData ? 'readonly' : '')}>
@@ -78,7 +79,7 @@ export default class TessaAssetSelection extends React.Component<Props, { modalV
                   </div>
                 </a>
 
-                {this.props.canEditData &&
+                {this.props.canEditData && canEditAssetsInAkeneoUi &&
                 <div className="AknButton AknButton--important AknButton--micro AknButton-squareIcon AknButton-squareIcon--delete AknAssetCollectionField-icon remove-item js-remove-asset"
                      title={__('tessa.asset management.remove')}
                      onClick={(e: React.MouseEvent) => this.removeAsset(e, item.id)}>

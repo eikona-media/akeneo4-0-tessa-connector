@@ -2,6 +2,7 @@
 
 ## Unreleased
 * [feature] Automatically sync reference entities with TESSA
+* [feature] Added option to disable editing of assets in the Akeneo Ui (editing then only works within the TESSA dialog)
 
 ## 1.1.1 (2020-02-04)
 * [bugfix] Allowed attributes of type 'pim_catalog_asset_collection' as main image

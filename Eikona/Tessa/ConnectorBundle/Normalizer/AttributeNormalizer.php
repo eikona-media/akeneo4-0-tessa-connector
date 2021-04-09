@@ -10,6 +10,7 @@ namespace Eikona\Tessa\ConnectorBundle\Normalizer;
 
 use Akeneo\Pim\Structure\Component\Model\AttributeInterface;
 use Eikona\Tessa\ConnectorBundle\AttributeType\TessaType;
+use Eikona\Tessa\ConnectorBundle\Tessa;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 /**
@@ -22,12 +23,25 @@ class AttributeNormalizer implements NormalizerInterface
     /** @var NormalizerInterface */
     protected $normalizer;
 
+    /** @var Tessa */
+    protected $tessa;
+
     /**
      * @param NormalizerInterface $normalizer
      */
-    public function __construct(NormalizerInterface $normalizer)
+    public function __construct(
+        NormalizerInterface $normalizer
+    )
     {
         $this->normalizer = $normalizer;
+    }
+
+    /**
+     * @param Tessa $tessa
+     */
+    public function setTessa(Tessa $tessa)
+    {
+        $this->tessa = $tessa;
     }
 
     /**
@@ -39,8 +53,14 @@ class AttributeNormalizer implements NormalizerInterface
      */
     public function normalize($attribute, $format = null, array $context = [])
     {
-        return $this->normalizer->normalize($attribute, $format, $context)
-            + $this->getTessaProperties($attribute);
+        $normalizedAttribute = $this->normalizer->normalize($attribute, $format, $context);
+
+        $exportUrl = $attribute->getProperty(TessaType::ATTRIBUTE_EXPORT_URL);
+        $normalizedAttribute[TessaType::ATTRIBUTE_EXPORT_URL] = $exportUrl;
+
+        $normalizedAttribute['meta']['canEditAssetsInAkeneoUi'] = !$this->tessa->isAssetEditingInAkeneoUiDisabled();;
+
+        return $normalizedAttribute;
     }
 
     /**
@@ -49,15 +69,5 @@ class AttributeNormalizer implements NormalizerInterface
     public function supportsNormalization($data, $format = null)
     {
         return $this->normalizer->supportsNormalization($data, $format);
-    }
-
-    private function getTessaProperties(AttributeInterface $attribute)
-    {
-        $properties = [];
-
-        $exportUrl = $attribute->getProperty(TessaType::ATTRIBUTE_EXPORT_URL);
-        $properties[TessaType::ATTRIBUTE_EXPORT_URL] = $exportUrl;
-
-        return $properties;
     }
 }
