@@ -51,7 +51,9 @@ define(
           syncinbackground: this.getFormData().pim_eikona_tessa_connector___sync_in_background ?
             this.getFormData().pim_eikona_tessa_connector___sync_in_background.value : false,
           userUsedByTessa: this.getFormData().pim_eikona_tessa_connector___user_used_by_tessa ?
-            this.getFormData().pim_eikona_tessa_connector___user_used_by_tessa.value : ''
+            this.getFormData().pim_eikona_tessa_connector___user_used_by_tessa.value : '',
+          disableAssetEditingInAkeneoInUi: this.getFormData().pim_eikona_tessa_connector___disable_asset_editing_in_akeneo_ui ?
+            this.getFormData().pim_eikona_tessa_connector___disable_asset_editing_in_akeneo_ui.value : false
         }));
 
         this.$el.find('.switch').bootstrapSwitch();

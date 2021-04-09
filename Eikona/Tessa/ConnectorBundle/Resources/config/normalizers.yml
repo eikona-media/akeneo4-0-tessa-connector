@@ -4,13 +4,6 @@ services:
     tags:
       - { name: pim_internal_api_serializer.normalizer }
 
-  eikona.tessa.normalizer.tessa_queue:
-    class: Eikona\Tessa\ConnectorBundle\Normalizer\TessaQueueNormalizer
-    arguments:
-      - '@eikona.utilities.id_prefixer'
-      - '@pim_standard_format_serializer'
-      - '@eikona.tessa.normalizer.standard.product'
-
   # ProductNormalizer ohne Berechtigungsabfragen (1)
   eikona.tessa.query.get_associated_product_codes_by_product:
     class: 'Akeneo\Pim\Enrichment\Bundle\Storage\Sql\Product\GetAssociatedProductCodesByProductFromDB'
@@ -37,6 +30,8 @@ services:
     decorates: pim_enrich.normalizer.attribute
     arguments:
       - '@eikona.media.tessa.normalizer.attribute.inner'
+    calls:
+      - setTessa: ['@eikona.tessa']
     tags:
       - { name: pim_internal_api_serializer.normalizer, priority: 89 }
 
@@ -46,5 +41,7 @@ services:
     decorates: pim_catalog.normalizer.standard.attribute
     arguments:
       - '@eikona.media.tessa.normalizer.standard.attribute.inner'
+    calls:
+      - setTessa: ['@eikona.tessa']
     tags:
       - { name: pim_serializer.normalizer, priority: 89 }

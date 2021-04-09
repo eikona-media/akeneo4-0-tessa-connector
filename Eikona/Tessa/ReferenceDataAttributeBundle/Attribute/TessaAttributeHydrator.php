@@ -19,12 +19,33 @@ use Akeneo\ReferenceEntity\Domain\Model\Attribute\AttributeValuePerLocale;
 use Akeneo\ReferenceEntity\Domain\Model\LabelCollection;
 use Akeneo\ReferenceEntity\Domain\Model\ReferenceEntity\ReferenceEntityIdentifier;
 use Akeneo\ReferenceEntity\Infrastructure\Persistence\Sql\Attribute\Hydrator\AbstractAttributeHydrator;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
+use Eikona\Tessa\ConnectorBundle\Tessa;
 use Eikona\Tessa\ReferenceDataAttributeBundle\Attribute\Property\MaxAssets\AttributeTessaMaxAssets;
 
 class TessaAttributeHydrator extends AbstractAttributeHydrator
 {
+    /**
+     * @var Tessa
+     */
+    protected $tessa;
+
+    /**
+     * TessaAttributeHydrator constructor.
+     *
+     * @param Connection $sqlConnection
+     * @param Tessa      $tessa
+     */
+    public function __construct(
+        Connection $sqlConnection,
+        Tessa $tessa
+    )
+    {
+        parent::__construct($sqlConnection);
+        $this->tessa = $tessa;
+    }
 
     protected function getExpectedProperties(): array
     {
@@ -60,7 +81,7 @@ class TessaAttributeHydrator extends AbstractAttributeHydrator
             ? AttributeTessaMaxAssets::noLimit()
             : AttributeTessaMaxAssets::fromInteger($row['max_assets']);
 
-        return TessaAttribute::createTessa(
+        $attribute = TessaAttribute::createTessa(
             AttributeIdentifier::fromString($row['identifier']),
             ReferenceEntityIdentifier::fromString($row['reference_entity_identifier']),
             AttributeCode::fromString($row['code']),
@@ -72,6 +93,9 @@ class TessaAttributeHydrator extends AbstractAttributeHydrator
             $maxAssets,
             AttributeAllowedExtensions::fromList($row['allowed_extensions'])
         );
+
+        $attribute->setTessa($this->tessa);
+        return $attribute;
     }
 
     public function supports(array $result): bool

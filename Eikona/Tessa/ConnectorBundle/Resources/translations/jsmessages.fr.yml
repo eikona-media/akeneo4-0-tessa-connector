@@ -33,6 +33,9 @@ tessa:
     userusedbytessa:
       label: Nom d'utilisateur pour Akeneo API
       description: Utilisateur d'Akeneo utilisé par TESSA pour accéder à l'API d'Akeneo
+    disableasseteditinginakeneoui:
+      label: Désactiver l'édition des actifs dans l'interface utilisateur d'Akeneo
+      description: Désactive l'édition des actifs dans l'interface utilisateur Akeneo. Les actifs ne peuvent être édités que via la boîte de dialogue des actifs.
     tab:
       label: TESSA
     link:

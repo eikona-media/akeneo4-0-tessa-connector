@@ -22,6 +22,7 @@ class TessaNotificationQueueService
 {
     const TYPE_PRODUCT = 'product';
     const TYPE_PRODUCT_MODEL = 'product_model';
+    const TYPE_REFERENCE_ENTITIY = 'reference_entitiy';
     const ACTION_MODIFIED = 'modified';
     const ACTION_REMOVED = 'removed';
 

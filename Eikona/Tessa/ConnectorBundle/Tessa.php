@@ -2,7 +2,7 @@
 
 namespace Eikona\Tessa\ConnectorBundle;
 
-use Eikona\Tessa\ConnectorBundle\Normalizer\TessaQueueNormalizer;
+use Eikona\Tessa\ConnectorBundle\Normalizer\NotificationNormalizer\NotificationNormalizer;
 use Exception;
 use Monolog\Logger;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -16,15 +16,20 @@ class Tessa
     public const TYPE_PRODUCT = 'product';
     public const TYPE_PRODUCT_MODEL = 'product_model';
     public const TYPE_GROUP = 'group';
+    public const TYPE_ENTITY = 'entity';
+    public const TYPE_ENTITY_RECORD = 'entity_record';
 
     public const RESOURCE_NAME_CATEGORY = 'Category';
     public const RESOURCE_NAME_CHANNEL = 'Channel';
     public const RESOURCE_NAME_PRODUCT = 'Product';
     public const RESOURCE_NAME_PRODUCT_MODEL = 'ProductModel';
     public const RESOURCE_NAME_GROUP = 'Group';
+    public const RESOURCE_NAME_ENTITY = 'Entity';
+    public const RESOURCE_NAME_ENTITY_RECORD = 'EntityRecord';
 
     public const CONTEXT_UPDATE = 'Update';
     public const CONTEXT_DELETE = 'Deletion';
+    public const CONTEXT_DELETE_ALL_RECORDS = 'DeletionAllRecords';
 
     /** @var string */
     protected $baseUrl;
@@ -59,8 +64,11 @@ class Tessa
     /** @var string */
     protected $userUsedByTessa;
 
-    /** @var TessaQueueNormalizer */
-    protected $tessaQueueNormalizer;
+    /** @var bool */
+    protected $isAssetEditingInAkeneoUiDisabled;
+
+    /** @var NotificationNormalizer */
+    protected $notificationNormalizer;
 
     /**
      * Tessa constructor.
@@ -68,13 +76,13 @@ class Tessa
      * @param ConfigManager $oroGlobal
      * @param Kernel|KernelInterface $kernel
      * @param Logger $logger
-     * @param TessaQueueNormalizer $tessaQueueNormalizer
+     * @param NotificationNormalizer $notificationNormalizer
      */
     public function __construct(
         ConfigManager $oroGlobal,
         KernelInterface $kernel,
         Logger $logger,
-        TessaQueueNormalizer $tessaQueueNormalizer
+        NotificationNormalizer $notificationNormalizer
     )
     {
         try {
@@ -87,6 +95,7 @@ class Tessa
             $this->syncInBackground = (bool)$oroGlobal->get('pim_eikona_tessa_connector.sync_in_background');
             $this->chunkSize = (int)$oroGlobal->get('pim_eikona_tessa_connector.chunk_size');
             $this->userUsedByTessa = trim($oroGlobal->get('pim_eikona_tessa_connector.user_used_by_tessa'));
+            $this->isAssetEditingInAkeneoUiDisabled = (bool)$oroGlobal->get('pim_eikona_tessa_connector.disable_asset_editing_in_akeneo_ui');
         } catch(Exception $e) {
             // This exception happens when the database is missing (first installion, so nothing to concern about)
             $this->baseUrl = '';
@@ -98,10 +107,11 @@ class Tessa
             $this->syncInBackground = false;
             $this->chunkSize = 100;
             $this->userUsedByTessa = '';
+            $this->isAssetEditingInAkeneoUiDisabled = false;
         }
         $this->kernel = $kernel;
         $this->logger = $logger;
-        $this->tessaQueueNormalizer = $tessaQueueNormalizer;
+        $this->notificationNormalizer = $notificationNormalizer;
     }
 
     /**
@@ -179,6 +189,14 @@ class Tessa
     /**
      * @return bool
      */
+    public function isAssetEditingInAkeneoUiDisabled()
+    {
+        return $this->isAssetEditingInAkeneoUiDisabled;
+    }
+
+    /**
+     * @return bool
+     */
     public function isAvailable(): bool
     {
         if (!$this->baseUrl) {
@@ -203,7 +221,7 @@ class Tessa
      */
     public function notifySingleModification($entity)
     {
-        $this->sendNotificationToTessa($this->tessaQueueNormalizer->normalizeModification($entity));
+        $this->sendNotificationToTessa($this->notificationNormalizer->normalizeModification($entity));
     }
 
     /**
@@ -212,7 +230,7 @@ class Tessa
     public function notifyBulkModification(array $entities)
     {
         $normalizedEntities = array_map(function ($entity) {
-            return $this->tessaQueueNormalizer->normalizeModification($entity);
+            return $this->notificationNormalizer->normalizeModification($entity);
         }, $entities);
 
         $chunks = array_chunk($normalizedEntities, $this->getChunkSize());
@@ -222,20 +240,20 @@ class Tessa
     }
 
     /**
-     * @param int $id
+     * @param int|string $id
      * @param string $identifier
      * @param string $type
      */
-    public function notifySingleDeletion(int $id, string $identifier, string $type)
+    public function notifySingleDeletion($id, string $identifier, string $type)
     {
-        $this->sendNotificationToTessa($this->tessaQueueNormalizer->normalizeDeletion($id, $identifier, $type));
+        $this->sendNotificationToTessa($this->notificationNormalizer->normalizeDeletion($type, $id, $identifier));
     }
 
     /**
      * @param array $payload
      * @param bool $isBulk
      */
-    protected function sendNotificationToTessa(array $payload, $isBulk = false)
+    public function sendNotificationToTessa(array $payload, $isBulk = false)
     {
         if (empty($this->baseUrl)) {
             return;

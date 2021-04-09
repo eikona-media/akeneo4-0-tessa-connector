@@ -5,7 +5,7 @@ services:
             - '@oro_config.global'
             - '@kernel'
             - '@logger'
-            - '@eikona.tessa.normalizer.tessa_queue'
+            - '@eikona.tessa.notification_normalizer'
 
     eikona.utilities.math:
         class: Eikona\Tessa\ConnectorBundle\Utilities\Math

@@ -15,7 +15,7 @@
                 </div>
             </a>
 
-            <% if (!isReadOnly) { %>
+            <% if (canEditAssetsInAkeneoUi && !isReadOnly) { %>
                 <% if (item.markedToRemove) { %>
                 <div class="AknButton AknButton--important AknButton--micro AknButton-squareIcon AknButton-squareIcon--undo AknAssetCollectionField-icon remove-item js-remove-asset"
                      data-asset-id="<%= item.id %>"

@@ -8,6 +8,8 @@ services:
 
   eikona.media.tessa.referencedataattribute.factory.tessa_attribute_factory:
     class: Eikona\Tessa\ReferenceDataAttributeBundle\Attribute\TessaAttributeFactory
+    arguments:
+      - '@eikona.tessa'
     tags:
       - { name: akeneo_referenceentity.attribute_factory }
 
@@ -15,6 +17,7 @@ services:
     class: Eikona\Tessa\ReferenceDataAttributeBundle\Attribute\TessaAttributeHydrator
     arguments:
       - '@database_connection'
+      - '@eikona.tessa'
     tags:
       - { name: akeneo_referenceentity.attribute_hydrator }
 
