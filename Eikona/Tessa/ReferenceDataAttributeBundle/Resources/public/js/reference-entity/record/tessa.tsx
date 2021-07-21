@@ -149,7 +149,7 @@ const TessaCellView: CellView = memo(({ column, value }: { column: any, value: N
   }
 
   let maxDisplayedAssets = column.attribute.max_displayed_assets;
-  maxDisplayedAssets = Number.isInteger(maxDisplayedAssets) ? 1 : maxDisplayedAssets;
+  maxDisplayedAssets = Number.isInteger(maxDisplayedAssets) ? maxDisplayedAssets : 1;
 
   const displayedAssets = tessaAssetIds
     .slice(0, maxDisplayedAssets)
