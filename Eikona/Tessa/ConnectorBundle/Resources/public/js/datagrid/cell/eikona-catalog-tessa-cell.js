@@ -15,28 +15,45 @@ define(
     'underscore',
     'eikona/tessa/connector/datagrid/cell/template',
     'oro/datagrid/string-cell',
-    'routing'
+    'routing',
+    'eikona/tessa/fetcher/attribute'
   ],
-  function (_, fieldTemplate, StringCell, Routing) {
+  function (_, fieldTemplate, StringCell, Routing, AttributeFetcher) {
     return StringCell.extend({
       fieldTemplate: _.template(fieldTemplate),
       render () {
-        const value = this.model.get(this.column.get('name'));
-        const tessaAssetIds = value ? value.split(',') : [];
-        let showUrl = '';
 
-        if (tessaAssetIds.length <= 0) {
-          return this;
-        }
+        const attributeCode = this.column.get('name');
 
-        const firstAssetId = tessaAssetIds[0];
-        showUrl = Routing.generate('eikona_tessa_media_preview', {assetId: firstAssetId});
+        AttributeFetcher.getAttribute(attributeCode).then((attributeDefinition) => {
+          let maxDisplayedAssets = parseInt(attributeDefinition.max_displayed_assets, 10);
+          maxDisplayedAssets = Number.isNaN(maxDisplayedAssets) ? 1 : maxDisplayedAssets;
 
-        this.$el.empty()
-          .html(this.fieldTemplate({
-            url: showUrl,
-            assets: tessaAssetIds
-          }));
+          const value = this.model.get(attributeCode);
+          const tessaAssetIds = value ? value.split(',') : [];
+          if (tessaAssetIds.length === 0) {
+            return this;
+          }
+
+          const displayedAssets = tessaAssetIds
+            .slice(0, maxDisplayedAssets)
+            .map((tessaAssetId) => ({
+              url: Routing.generate('eikona_tessa_media_preview', {assetId: tessaAssetId}),
+              assetId: tessaAssetId
+            }))
+
+          const additionalAssets = tessaAssetIds
+            .slice(maxDisplayedAssets)
+            .map((tessaAssetId) => ({
+              assetId: tessaAssetId
+            }))
+
+          this.$el.empty()
+            .html(this.fieldTemplate({
+              displayedAssets,
+              additionalAssets
+            }));
+        });
 
         return this;
       }
