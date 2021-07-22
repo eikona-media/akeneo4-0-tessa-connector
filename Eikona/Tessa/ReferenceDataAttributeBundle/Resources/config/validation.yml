@@ -19,6 +19,8 @@ Eikona\Tessa\ReferenceDataAttributeBundle\Attribute\CreateTessaAttributeCommand:
       - Eikona\Tessa\ReferenceDataAttributeBundle\Validation\Attribute\TessaMaxAssets: ~
     allowedExtensions:
       - Akeneo\ReferenceEntity\Infrastructure\Validation\Attribute\AllowedExtensions: ~
+    maxDisplayedAssets:
+      - Eikona\Tessa\ReferenceDataAttributeBundle\Validation\Attribute\TessaMaxDisplayedAssets: ~
   constraints:
     - Akeneo\ReferenceEntity\Infrastructure\Validation\Attribute\AttributeShouldNotExist: { groups: [other_constraints] }
     - Akeneo\ReferenceEntity\Infrastructure\Validation\Attribute\ThereShouldBeLessAttributesThanLimit: { groups: [other_constraints] }
