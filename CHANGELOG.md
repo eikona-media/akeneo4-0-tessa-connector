@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.3.0 (2021-08-11)
 * [feature] Adjust the amount of assets displayed in product grid and reference entity grid
 
 ## 1.2.0 (2020-04-09)
