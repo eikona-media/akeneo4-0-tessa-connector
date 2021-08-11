@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0 (2021-08-11)
+* [feature] Adjust the amount of assets displayed in product grid and reference entity grid
+
 ## 1.2.0 (2020-04-09)
 * [feature] Automatically sync reference entities with TESSA
 * [feature] Added option to disable editing of assets in the Akeneo UI (editing then only works within the TESSA dialog)
