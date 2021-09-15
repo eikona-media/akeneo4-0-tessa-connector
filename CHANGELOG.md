@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+* [bugfix] Fixed attribute export (removed column "meta")
+
 ## 1.3.0 (2021-08-11)
 * [feature] Adjust the amount of assets displayed in product grid and reference entity grid
 
